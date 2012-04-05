@@ -1,0 +1,135 @@
+10
+
+dir
+122
+https://subversion.assembla.com/svn/foxhoundsvn-01/mobile-codeIgniter/application
+https://subversion.assembla.com/svn/foxhoundsvn-01
+
+
+
+2012-04-04T04:48:37.274613Z
+122
+roi@fox-hound.jp
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+afaea471-7c98-4fed-8ca6-e4d46c7ce955
+
+.htaccess
+file
+
+
+
+
+2012-03-29T14:18:27.000000Z
+209634bb0238704c4874c35d615ae59e
+2012-03-29T06:24:56.069117Z
+75
+roi@fox-hound.jp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13
+
+cache
+dir
+
+config
+dir
+
+controllers
+dir
+
+core
+dir
+
+errors
+dir
+
+helpers
+dir
+
+hooks
+dir
+
+index.html
+file
+
+
+
+
+2012-03-29T14:18:27.000000Z
+0227cfd904e99656279202032b98d4a7
+2012-03-29T06:24:56.069117Z
+75
+roi@fox-hound.jp
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+114
+
+language
+dir
+
+libraries
+dir
+
+logs
+dir
+
+models
+dir
+
+third_party
+dir
+
+views
+dir
+

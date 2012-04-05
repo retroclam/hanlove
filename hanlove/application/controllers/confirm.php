@@ -1,0 +1,506 @@
+<?php
+/**
+ *人気スターを探す
+ *索引からさがす
+ *スタープロファイル
+ *友達招待
+ *メールで占い診断
+ * **/
+class Confirm extends CI_Controller{
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('index_model');
+		$this->index_model->PDOconnect();
+	}
+	public function index($group,$target){
+		$this->load->library('Myemoji');
+		$this->mail($group, $target);
+	}
+
+
+	public function profile($group,$target){
+		$this->load->library('Myemoji');
+		if($target > 0){
+			//指定の韓流スターのプロファイル取得
+			$sql = "select * from h_profile where p_profid = '$target' ";
+			$result_star = $this->index_model->getAll($sql);
+		}elseif($group>0){
+			//指定の韓流グループのプロファイル取得
+			$sql = "select * from h_profile where p_groupid = '$group' and p_profid='0'";
+			$result_star = $this->index_model->getAll($sql);
+			$target = $group;
+		}
+
+		$star_id = 0 ;
+
+		// データセット
+		$data['target'] = $target;
+		$data['group'] = $group;
+		$data['p_profid']=$result_star[$star_id]['p_profid'];
+		$data['p_groupid']=$result_star[$star_id]['p_groupid'];
+		$data['p_groupname']=$result_star[$star_id]['p_groupname'];
+		$data['p_name']=$result_star[$star_id]['p_name'];
+		$data['p_nativename']=$result_star[$star_id]['p_nativename'];
+		$data['p_category']=$result_star[$star_id]['p_category'];
+		$data['p_eto']=$result_star[$star_id]['p_eto'];
+		$data['p_eto_jp']=$result_star[$star_id]['p_eto_jp'];
+		$data['p_birth']=$result_star[$star_id]['p_birth'];
+		$data['p_blod']=$result_star[$star_id]['p_blod'];
+		$data['p_height']=$result_star[$star_id]['p_height'];
+		$data['p_weight'] = $result_star[$star_id]['p_weight'];
+		$data['p_bio']=$result_star[$star_id]['p_bio'];
+		$data['p_hobby']=$result_star[$star_id]['p_hobby'];
+		$data['p_skill']=$result_star[$star_id]['p_skill'];
+		$data['p_academic']=$result_star[$star_id]['p_academic'];
+		$data['p_sigles']=$result_star[$star_id]['p_sigles'];
+		$data['p_album']=$result_star[$star_id]['p_album'];
+		$data['p_movie']=$result_star[$star_id]['p_movie'];
+		$data['p_drama']=$result_star[$star_id]['p_drama'];
+		$data['p_award']=$result_star[$star_id]['p_award'];
+
+		$data['p_twitter']=$result_star[$star_id]['p_twitter'];
+		$data['p_blog']=$result_star[$star_id]['p_blog'];
+		$data['p_officialmobile']=$result_star[$star_id]['p_officialmobile'];
+		$data['p_officialmobile_name']=$result_star[$star_id]['p_officialmobile_name'];
+		$data['p_officialpc']=$result_star[$star_id]['p_officialpc'];
+		$data['p_officialpc_name']=$result_star[$star_id]['p_officialpc_name'];
+		$data['p_officialpersonal']=$result_star[$star_id]['p_officialpersonal'];
+		$data['p_officialpersonal_name']=$result_star[$star_id]['p_officialpersonal_name'];
+		$data['p_officialgroup']=$result_star[$star_id]['p_officialgroup'];
+		$data['p_officialgroup_name']=$result_star[$star_id]['p_officialgroup_name'];
+		$data['p_Initial']=$result_star[$star_id]['p_Initial'];
+		//★画像URL生成
+		$id_count = 4 - mb_strlen($target);
+		switch($id_count){
+			case 1:
+				$img_id = '0'.$target;
+				break;
+			case 2:
+				$img_id = '00'.$target;
+				break;
+			case 3:
+				$img_id = '000'.$target;
+				break;
+		}
+		if($target == $group){
+			$img_id = 'g'.$img_id;
+			$target = '';
+		}
+		$data['img_id'] = $img_id;
+
+		$this->load->view('headerview');
+		$this->load->view('confirm_profile',$data);
+		$this->load->view('footer_s');
+	}
+	public function art_list(){
+		$this->load->library('Myemoji');
+		$this->load->view('headerview');
+		$this->load->view('confirm_art_list');
+		$this->load->view('footer_ss');
+	}
+	//送られてきた値があるかをチェック
+	public function data_c($data){
+		$this->load->library('Myemoji');
+		if(isset($_REQUEST[$data])){
+			$data_c = $_REQUEST[$data];
+		}else{
+			$data_c = null;
+		}
+		
+		return $data_c;
+	}
+
+	public function mail($group,$target){
+		$this->load->library('Myemoji');
+		//$u_subno	= 	getSubscriber($_SERVER['HTTP_USER_AGENT']);
+		//$u_tid		=	md5($u_subno);
+		//$u_type		= 	getmobilepr($_SERVER['HTTP_USER_AGENT']);
+
+		//$term_name	=	getTerminalname();
+
+		//$aid		=	$_REQUEST['aid'];
+		//$ticket		=	$_REQUEST['ticket'];
+
+		//追加分
+		//$target		=	$_REQUEST['target'];
+		//$group		=	$_REQUEST['group'];
+
+
+	    $confirm_type = $this->data_c('type');
+	    $u_gender = $this->data_c('u_gender');
+	    $u_pref = $this->data_c('u_pref');
+	    $opt_check = $this->data_c('opt_check');
+	    $job = $this->data_c('u_job');
+	    $nick = $this->data_c('u_name');
+	    $birth = $this->data_c('u_birth');
+
+	    //$u_gender 	= 	$_REQUEST['u_gender'];
+	    //$u_pref 	= 	$_REQUEST['u_pref'];
+	    //$opt_check 	= 	$_REQUEST['opt_check'];
+	    //$job		=	$_REQUEST['u_job'];
+	    //$nick = $_REQUEST['u_name'];
+	    //$group = $this->data_c('group');
+	    //$target = $this->data_c('target');
+	    if(isset($group)){
+	    	$group= $group;
+	    }else{
+	    	$group = 0;
+	    }
+	    if(isset($target)){
+			$target = $target;
+	    }else{
+	    	$target = 0;
+	    }
+	   $data['group'] = $group;
+	   $data['target'] = $target;
+
+		//通常の占い
+		if($confirm_type =='invite'){
+
+
+		}else{
+
+					switch($job){
+						case '1':
+							$job_c = "会社員";
+							break;
+						case '2':
+							$job_c = "自営業";
+							break;
+						case '3':
+							$job_c = "学生";
+							break;
+						case '4':
+							$job_c = "ｱﾙﾊﾞｲﾄ";
+							break;
+						case '5':
+							$job_c = "専業主婦";
+							break;
+						case '6':
+							$job_c = "無職";
+							break;
+						case '7':
+							$job_c = "その他";
+							break;
+					}
+
+					//▼性別の表記用の変換
+					switch($u_gender){
+						case 1:
+							$u_gender_c = "男性";
+							break;
+						case 2:
+							$u_gender_c = "女性";
+							break;
+					}
+					//▼都道府県の表記用の変換
+					switch($u_pref){
+						case 1:
+							$u_pref_c = "北海道";
+							break;
+						case 2:
+							$u_pref_c = "青森県";
+							break;
+						case 3:
+							$u_pref_c = "岩手県";
+							break;
+						case 4:
+							$u_pref_c = "宮城県";
+							break;
+						case 5:
+							$u_pref_c = "秋田県";
+							break;
+						case 6:
+							$u_pref_c = "山形県";
+							break;
+						case 7:
+							$u_pref_c = "福島県";
+							break;
+						case 8:
+							$u_pref_c = "茨城県";
+							break;
+						case 9:
+							$u_pref_c = "栃木県";
+							break;
+						case 10:
+							$u_pref_c = "群馬県";
+							break;
+						case 11:
+							$u_pref_c = "埼玉県";
+							break;
+						case 12:
+							$u_pref_c = "千葉県";
+							break;
+						case 13:
+							$u_pref_c = "東京都";
+							break;
+						case 14:
+							$u_pref_c = "神奈川県";
+							break;
+						case 15:
+							$u_pref_c = "新潟県";
+							break;
+						case 16:
+							$u_pref_c = "富山県";
+							break;
+						case 17:
+							$u_pref_c = "石川県";
+							break;
+						case 18:
+							$u_pref_c = "福井県";
+							break;
+						case 19:
+							$u_pref_c = "山梨県";
+							break;
+						case 20:
+							$u_pref_c = "長野県";
+							break;
+						case 21:
+							$u_pref_c = "岐阜県";
+							break;
+						case 22:
+							$u_pref_c = "静岡県";
+							break;
+						case 23:
+							$u_pref_c = "愛知県";
+							break;
+						case 24:
+							$u_pref_c = "三重県";
+							break;
+						case 25:
+							$u_pref_c = "滋賀県";
+							break;
+						case 26:
+							$u_pref_c = "京都府";
+							break;
+						case 27:
+							$u_pref_c = "大阪府";
+							break;
+						case 28:
+							$u_pref_c = "兵庫県";
+							break;
+						case 29:
+							$u_pref_c = "奈良県";
+							break;
+						case 30:
+							$u_pref_c = "和歌山県";
+							break;
+						case 31:
+							$u_pref_c = "鳥取県";
+							break;
+						case 32:
+							$u_pref_c = "島根県";
+							break;
+						case 33:
+							$u_pref_c = "岡山県";
+							break;
+						case 34:
+							$u_pref_c = "広島県";
+							break;
+						case 35:
+							$u_pref_c = "山口県";
+							break;
+						case 36:
+							$u_pref_c = "徳島県";
+							break;
+						case 37:
+							$u_pref_c = "香川県";
+							break;
+						case 38:
+							$u_pref_c = "愛媛県";
+							break;
+						case 39:
+							$u_pref_c = "高知県";
+							break;
+						case 40:
+							$u_pref_c = "福岡県";
+							break;
+						case 41:
+							$u_pref_c = "佐賀県";
+							break;
+						case 42:
+							$u_pref_c = "長崎県";
+							break;
+						case 43:
+							$u_pref_c = "熊本県";
+							break;
+						case 44:
+							$u_pref_c = "大分県";
+							break;
+						case 45:
+							$u_pref_c = "宮崎県";
+							break;
+						case 46:
+							$u_pref_c = "鹿児島県";
+							break;
+						case 47:
+							$u_pref_c = "沖縄県";
+							break;
+					}
+				//■生年月日のチェック
+				$ng_check = 0;
+					if(strlen($birth) != 8 || !preg_match("/^[0-9]+$/", $birth)){
+						$message = '<font color=#ff0000><b>!</b></font>生年月日が正しくありません。<br /><span style="font-size:xx-small">※ｹｰﾀｲの[戻るﾎﾞﾀﾝ]で戻って下さい。</span><br />';
+						$ng_check = 2;
+					}else{
+						$year 	= substr($birth,0,4);
+						$month	= substr($birth,4,2);
+						$day	= substr($birth,6,2);
+						//年月がおかしくないかチェック
+						if($year <= 1930 || $year >= 2010){
+							$message .= '<font color=#ff0000><b>!</b></font>生年月日が正しくありません。<br /><span style="font-size:xx-small">※ｹｰﾀｲの[戻るﾎﾞﾀﾝ]で戻って下さい。</span><br />';
+							$ng_check = 2;
+
+						}else{
+							//月日の整合性があってるかチェック
+							if(!checkdate($month,$day,$year)){
+								$message .= '<font color=#ff0000><b>!</b></font>生年月日が正しくありません。<br /><span style="font-size:xx-small">※ｹｰﾀｲの[戻るﾎﾞﾀﾝ]で戻って下さい。</span><br />';
+								$ng_check = 2;
+
+							}else{
+								//生年月日生成
+								$u_birth	= $year."/".$month."/".$day;
+								$birth_chk	= $year.$month.$day;
+							}
+						}
+					}
+
+				//■年齢の算出
+				if(isset($birth_chk)){
+					$u_age = floor((date("Ymd") - $birth_chk)/10000);
+					$u_eto = ($year+ 8) % 10;
+				}
+
+				//@TODO：この辺のソース見直し。（何度も登録できるようにするべき）
+				//■名前のチェック
+					if(mb_strlen($nick) < 2 || mb_strlen($nick) > 16){
+						$message = '<font color=#ff0000><b>!</b></font>名前は2～16文字で入力してください。<br /><span style="font-size:xx-small">※ｹｰﾀｲの[戻るﾎﾞﾀﾝ]で戻って下さい。</span><br />';
+						$ng_check = 3;
+
+					}
+
+				//▼Subno
+				/*if(empty($u_subno)){
+					$message.= '<font color=#ff0000><b>!固体識別番号を送信してください</b></font><br /><span style="font-size:xx-small">※ｹｰﾀｲの[戻るﾎﾞﾀﾝ]で戻って下さい。</span><br />';
+					$ng_check = 1;
+				}*/
+				if($target !=0 or $group !=0){
+					if($target >0){
+						//指定の韓流スターのプロファイル取得
+						$sql ="select * from h_profile where p_profid = '$target'";
+
+						$result_star = $this->index_model->getAll($sql);
+					}elseif($group>0){
+						//指定の韓流グループのプロファイル取得
+						$sql ="select * from h_profile where p_groupid = '$group' and p_profid = '0'";
+						$result_star = $this->index_model->getAll($sql);
+						$target      = $group;
+					}
+					$star_id =0;
+					//★画像URL生成
+					$id_count = 4 - mb_strlen($target);
+					switch($id_count){
+						case 1 :
+							$img_id = '0'.$target;
+							break;
+						case 2:
+							$img_id = '00'.$target;
+							break;
+						case 3:
+							$img_id = '000'.$target;
+							break;
+					}
+					if($target == $group){
+						$img_id = 'g'.$img_id;
+						$target = '';
+					}
+					//診断相手のアサイン
+					//@TODO:使うパラメータだけ取っておく
+
+
+					$data['img_id'] = $img_id;
+					$data['target'] = $target;
+					$data['group']  = $group;
+					$data['target'] = $target;
+					$data['p_profid']=$result_star[$star_id]['p_profid'];
+					$data['p_groupid']=$result_star[$star_id]['p_groupid'];
+					$data['p_groupname']=$result_star[$star_id]['p_groupname'];
+					$data['p_name']=$result_star[$star_id]['p_name'];
+					$data['p_nativename']=$result_star[$star_id]['p_nativename'];
+					$data['p_category']=$result_star[$star_id]['p_category'];
+					$data['p_eto']=$result_star[$star_id]['p_eto'];
+					$data['p_eto_jp']=$result_star[$star_id]['p_eto_jp'];
+					$data['p_birth']=$result_star[$star_id]['p_birth'];
+					$data['p_blod']=$result_star[$star_id]['p_blod'];
+					$data['p_height']=$result_star[$star_id]['p_height'];
+					$data['p_weight'] = $result_star[$star_id]['p_weight'];
+					$data['p_bio']=$result_star[$star_id]['p_bio'];
+					$data['p_hobby']=$result_star[$star_id]['p_hobby'];
+					$data['p_skill']=$result_star[$star_id]['p_skill'];
+					$data['p_academic']=$result_star[$star_id]['p_academic'];
+					$data['p_sigles']=$result_star[$star_id]['p_sigles'];
+					$data['p_album']=$result_star[$star_id]['p_album'];
+					$data['p_movie']=$result_star[$star_id]['p_movie'];
+					$data['p_drama']=$result_star[$star_id]['p_drama'];
+					$data['p_award']=$result_star[$star_id]['p_award'];
+
+					//画像ID
+					$data['img_id'] = $img_id;
+				}
+
+			//View
+			//テンプレ表示
+			if($birth != null){
+				$data['pref'] = $u_pref_c;
+				$data['gender'] = $u_gender_c;
+				$data['job'] = $job_c;
+				$data['birth'] = $birth_chk;
+				$data['u_nick'] = $nick;
+				$data['etid'] = $u_eto;
+				
+			}
+			$this->load->view('headerview');
+			$shindan_mode ='';
+
+			//占う対象がいる
+			if(isset($target) or isset($group)){
+				$shindan_mode = 1;
+			}else{
+				$shindan_mode = 2;
+			}
+			//エラーメッセージがある場合
+			if(isset($message)){
+				$data['message'] = $message;
+			}
+
+			//フォーム情報が入力されていてエラーあり→エラーページ
+				if(isset($u_pref) && $ng_check != 0){
+					$form_err_flg = 'error';
+					//フォーム情報が入力されていてエラーなし→確認ページ
+				}elseif(!empty($u_pref) && $ng_check == 0){
+					$form_err_flg = 'confirm';
+					//フォームがなしでエラーあり→registページ
+				}else{
+					$form_err_flg = 'regist';
+				}
+
+			//対象者ありの時
+			if($shindan_mode == 1 && $form_err_flg == 'error'){
+				$this->load->view('error',$data);
+			}elseif($shindan_mode == 1 && $form_err_flg == 'confirm'){
+				$this->load->view('confirm',$data);
+				//対象者なしの時
+			}elseif($shindan_mode == 2 && $form_err_flg == 'error'){
+				$this->load->view('error',$data);
+			}elseif($shindan_mode == 2 && $form_err_flg == 'confirm'){
+				$this->load->view('confirm',$data);
+			}elseif($shindan_mode == 1 && $form_err_flg == 'regist'){
+				$this->load->view('confirm_regist',$data);
+			}
+
+			//Footer
+				$this->load->view('footer_ss');
+		}//type
+	}//fun
+
+}
